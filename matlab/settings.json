@@ -1,11 +1,11 @@
 {
     "window": {
-        "overlap": 10,
-        "length": 20,
+        "overlap": -5,
+        "length": 5,
         "shape": "triangular"
     },
     "bands": {
-        "count": 10,
+        "count": 24,
         "spacing": "linear"
     }
 }

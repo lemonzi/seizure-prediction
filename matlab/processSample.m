@@ -13,11 +13,12 @@ function data_bands = processSample(filename, settings)
     [nch, nsamp] = size(data.data);
     winlen = round(fs * settings.window.length);
     if mod(winlen,2)
-        % Make sure we can take half window (FFT positive side)
+        % Make window length even so we can take half FFT window
         winlen = winlen + 1;
     end
-    nwindows = floor(nsamp / winlen);
     overlap = round(fs * settings.window.overlap);
+    overlap = winlen - overlap;
+    nwindows = floor(nsamp / overlap);
 
     % Cut data into chunks and generate windoed matrix
     raw = zeros(nch, winlen, nwindows);
@@ -28,17 +29,18 @@ function data_bands = processSample(filename, settings)
     % 1st order FIR filter to normalize frequency energies
     normalized = diff(raw, 1, 2);
 
-    % FFT magnitude analysis, discarding phase
-    nbins = winlen/2;
+    % FFT magnitude analysis, discarding phase and DC
+    nbins = winlen/2 - 1;
     freq = abs(fft(normalized, [], 2));
-    freq = freq(:,1:nbins,:);
+    freq = freq(:,2:nbins+1,:);
 
     % Band analysis (integrate over frequency with square windows)
     nbands = settings.bands.count;
-    bandw = floor(nbins / nbands);
+    bands = round(exp(linspace(0,log(nbins),nbands+1)));
+
     data_bands = zeros(nch, nbands, nwindows);
     for i = 1:nbands
-        data_bands(:,i,:) = sum(freq(:,(i-1)*bandw+1:i*bandw+1, :), 2);
+        data_bands(:,i,:) = sum(freq(:,bands(i):bands(i+1), :), 2);
     end
 
 end
