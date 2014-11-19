@@ -78,7 +78,7 @@ disp('Matrix ready. Training model...');
 % -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
 % -v nfolds: cross-validation with nfolds. Output score instead of model.
 
-out.svmParams = '-s 0 -t 1 -d 3 -h 0 -m 1000';
+out.svmParams = svmparse(settings.svm);
 out.settings = settings;
 out.train_files = train_files;
 out.model = svmtrain(output, train_matrix', out.svmParams);
