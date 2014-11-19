@@ -1,8 +1,9 @@
-%% init and train
+%% INIT
 
 % We're gonna need a lot of memory...
 clear all;
 
+% EDIT ME!!!
 % Point this to the folder where you keep the data (1 subject for now)
 folder = '~/Projects/UAB-Seizure Prediction/Dog_1/';
 
@@ -11,6 +12,7 @@ preictal_files = dirPattern([folder '*preictal*.mat']);
 interictal_files = dirPattern([folder '*interictal*.mat']);
 % test_files = dirPattern([folder '*test*.mat']);
 
+% EDIT ME!!!
 % Change this to use different subsets (lazy/impatient mode on)
 test_files = [preictal_files(21:24); interictal_files(21:24)];
 preictal_files = preictal_files(1:20);
@@ -22,6 +24,8 @@ settings = loadjson('./settings.json');
 % Init stuff
 train_files = [preictal_files; interictal_files];
 ntrain = numel(train_files);
+
+%% TRAIN
 
 % Process first recording to know what we should expect
 filename = train_files{1};
@@ -48,6 +52,8 @@ end
 output = repmat(cellfun(@(x)isempty(strfind(x,'interictal')), train_files), nwin, 1);
 output = double(output(:));
 
+disp('Matrix ready. Training model...');
+
 % -s svm_type : set type of SVM (default 0)
 %     0 -- C-SVC
 %     1 -- nu-SVC
@@ -70,13 +76,16 @@ output = double(output(:));
 % -h shrinking: whether to use the shrinking heuristics, 0 or 1 (default 1)
 % -b probability_estimates: whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)
 % -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
+% -v nfolds: cross-validation with nfolds. Output score instead of model.
 
-out.svmParams = '-s 0 -t 1 -d 3 -h 0 -m 1000 -v 10';
+out.svmParams = '-s 0 -t 1 -d 3 -h 0 -m 1000';
+out.settings = settings;
+out.train_files = train_files;
 out.model = svmtrain(output, train_matrix', out.svmParams);
 
 saveData('model.mat', out);
 
-%% test
+%% TEST
 
 ntest = numel(test_files);
 
@@ -89,6 +98,17 @@ for i = 1:ntest
     [nch, nbands, nwin] = size(bands);
     output = ones(nwin, 1) * isempty(strfind(filename,'interictal'));
     test_matrix = reshape(bands, [nch*nbands, nwin]);
-    [pred, acc_p] = svmpredict(zeros(size(rawn,1),1), rawn, model.model);
+    [pred{i}, acc_p{i}] = svmpredict(output, test_matrix', out.model);
 
 end
+
+% Very naive method, without kalman filters.
+% Just predict seizure if most windows have been predicted as seizure
+
+result = cellfun(@(pred,truth) ...
+    (round(mean(pred)) ~= isempty(strfind(truth,'interictal'))), ...
+    pred, test_files');
+
+accuracy = sum(result) / length(result);
+disp('-----------------------------');
+fprintf('Accuracy: %f\n', accuracy);
