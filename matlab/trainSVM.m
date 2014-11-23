@@ -5,7 +5,7 @@ clear all;
 
 % EDIT ME!!!
 % Point this to the folder where you keep the data (1 subject for now)
-folder = '~/Projects/UAB-Seizure Prediction/Dog_1/';
+folder = '~/Downloads/Patient_1/';
 
 % What files to use
 preictal_files = dirPattern([folder '*preictal*.mat']);
@@ -14,9 +14,9 @@ interictal_files = dirPattern([folder '*interictal*.mat']);
 
 % EDIT ME!!!
 % Change this to use different subsets (lazy/impatient mode on)
-test_files = [preictal_files(21:24); interictal_files(51:54)];
-preictal_files = preictal_files(1:20);
-interictal_files = interictal_files(1:50);
+test_files = [preictal_files(16:18); interictal_files(16:18)];
+preictal_files = preictal_files(1:15);
+interictal_files = interictal_files(1:15);
 
 % Important! Window size, # bands, etc
 settings = loadjson('./settings.json');
@@ -79,12 +79,12 @@ disp('Matrix ready. Training model...');
 % -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
 % -v nfolds: cross-validation with nfolds. Output score instead of model.
 
-out.svmParams = [svmparse(settings.svm) '-w0 0.7 -w1 0.3'] ;
+out.svmParams = [svmparse(settings.svm)] ;
 out.settings = settings;
 out.train_files = train_files;
 out.model = svmtrain(output, train_matrix', out.svmParams);
 
-saveData('model.mat', out);
+% saveData('model.mat', out);
 
 %% TEST
 
@@ -106,8 +106,12 @@ end
 % Very naive method, without kalman filters.
 % Just predict seizure if most windows have been predicted as seizure
 
-result = cellfun(@(pred,truth) ...
-    (round(mean(pred)) ~= isempty(strfind(truth,'interictal'))), ...
+% result = cellfun(@(p,truth) ...
+%     (median(p) ~= isempty(strfind(truth,'interictal'))), ...
+%     pred, test_files');
+
+result = cellfun(@(p,truth) ...
+    (any(p) == isempty(strfind(truth,'interictal'))), ...
     pred, test_files');
 
 accuracy = sum(result) / length(result);

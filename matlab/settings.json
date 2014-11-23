@@ -1,6 +1,6 @@
 {
     "window": {
-        "overlap": -5,
+        "overlap": -10,
         "length": 5
     },
     "bands": {
@@ -11,6 +11,6 @@
         "kernel": "polynomial",
         "degree": 3,
         "cache": 1000,
-        "shrinking": false
+        "shrinking": true
     }
 }
