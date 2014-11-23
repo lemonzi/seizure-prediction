@@ -1,11 +1,16 @@
 {
     "window": {
         "overlap": -5,
-        "length": 5,
-        "shape": "triangular"
+        "length": 5
     },
     "bands": {
-        "count": 24,
-        "spacing": "linear"
+        "count": 24
+    },
+    "svm": {
+        "type": "C-SVC",
+        "kernel": "polynomial",
+        "degree": 3,
+        "cache": 1000,
+        "shrinking": false
     }
 }

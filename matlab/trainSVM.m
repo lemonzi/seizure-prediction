@@ -14,9 +14,9 @@ interictal_files = dirPattern([folder '*interictal*.mat']);
 
 % EDIT ME!!!
 % Change this to use different subsets (lazy/impatient mode on)
-test_files = [preictal_files(21:24); interictal_files(21:24)];
+test_files = [preictal_files(21:24); interictal_files(51:54)];
 preictal_files = preictal_files(1:20);
-interictal_files = interictal_files(1:20);
+interictal_files = interictal_files(1:50);
 
 % Important! Window size, # bands, etc
 settings = loadjson('./settings.json');
@@ -49,6 +49,7 @@ for i = 2:ntrain
 end
 
 % Generate output class vector (assuming train_files is a row cell)
+% 1 is preictal (seizure), 0 interictal (no seizure)
 output = repmat(cellfun(@(x)isempty(strfind(x,'interictal')), train_files), nwin, 1);
 output = double(output(:));
 
@@ -78,7 +79,7 @@ disp('Matrix ready. Training model...');
 % -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
 % -v nfolds: cross-validation with nfolds. Output score instead of model.
 
-out.svmParams = svmparse(settings.svm);
+out.svmParams = [svmparse(settings.svm) '-w0 0.7 -w1 0.3'] ;
 out.settings = settings;
 out.train_files = train_files;
 out.model = svmtrain(output, train_matrix', out.svmParams);
