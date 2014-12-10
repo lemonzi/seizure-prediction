@@ -9,6 +9,9 @@ function data_bands = processSample(filename, settings)
     data = data.(name{1});
 
     % Windowing indexes
+    if (settings.window.length < settings.window.overlap)
+        error('Overlap cannot be greater than window length.');
+    end
     fs = data.sampling_frequency;
     [nch, nsamp] = size(data.data);
     winlen = round(fs * settings.window.length);

@@ -1,11 +1,17 @@
 {
     "window": {
-        "overlap": -5,
+        "overlap": -10,
         "length": 5
     },
     "bands": {
         "count": 24
     },
+    "data": {
+        "path": "/Users/lemonzi/Projects/UAB-Seizure Prediction/Dog_2",
+        "preictal": 10,
+        "interictal": 10
+    },
+    "threshold": 0.5,
     "svm": {
         "type": "C-SVC",
         "kernel": "polynomial",
@@ -14,6 +20,6 @@
         "shrinking": false
     },
     "crossvalidation": {
-        "folds": 10
+        "folds": 3
     }
 }
