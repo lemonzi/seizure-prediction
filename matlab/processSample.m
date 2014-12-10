@@ -20,7 +20,7 @@ function data_bands = processSample(filename, settings)
     overlap = winlen - overlap;
     nwindows = floor(nsamp / overlap);
 
-    % Cut data into chunks and generate windoed matrix
+    % Cut data into chunks and generate windowed matrix
     raw = zeros(nch, winlen, nwindows);
     for i = 1:nwindows
         raw(:,:,i) = data.data(:, overlap*(i-1)+1 : overlap*(i-1)+winlen);

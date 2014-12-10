@@ -12,5 +12,8 @@
         "degree": 3,
         "cache": 1000,
         "shrinking": false
+    },
+    "crossvalidation": {
+        "folds": 10
     }
 }

@@ -26,6 +26,6 @@ for i = 1:numel(files)
     end
     setenv('OUTPUT_VIDEO_FN', ['videos/', filename(1:end-4), '.mp4'])
     setenv('INPUT_FOLDER', ['out/', filename(1:end-4)])
-    !ffmpeg -framerate 4 -i $INPUT_FOLDER/img_%03d.png -c:v libx264 -r 30 $OUTPUT_VIDEO_FN &
+    !ffmpeg -framerate 4 -i $INPUT_FOLDER/img_%03d.png -c:v libx264 -vf scale=320:240 -r 30 $OUTPUT_VIDEO_FN &
 
 end
