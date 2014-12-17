@@ -2,8 +2,12 @@ function [accuracy, results, models] = trainSVM(settings)
 % Test an SVM system with cross-validation
 % Input: structure with settings (path, etc) as in settings.json
 % Output:
-%     - accuracy: cell with the accuracy vector for each fold
-%     - models: cell with the models, plus metadata, for each fold
+%     - accuracy: array with the accuracy for each fold
+%     - results: cell with a recording score arrays for each fold
+%          -1: false negative
+%           0: hit
+%           1: false positive
+%     - models: cell with the model, plus metadata, for each fold
 
     % Point this to the folder where you keep the data (1 subject for now)
     folder = settings.data.path;
@@ -13,8 +17,12 @@ function [accuracy, results, models] = trainSVM(settings)
     interictal_files = dirPattern([folder filesep '*interictal*.mat']);
 
     % Change this to use different subsets (lazy/impatient mode on)
-    preictal_files = preictal_files(1:settings.data.preictal);
-    interictal_files = interictal_files(1:settings.data.interictal);
+    if settings.data.preictal > 0
+        preictal_files = preictal_files(1:settings.data.preictal);
+    end
+    if settings.data.interictal > 0
+        interictal_files = interictal_files(1:settings.data.interictal);
+    end
 
     % Build dataset
     labels = [ones(length(preictal_files), 1); zeros(length(interictal_files), 1)];
