@@ -24,19 +24,27 @@ function out = svmparse(settings)
         [~,kernel] = ismember(kernel_string, kernels);
         out = sprintf('%s -t %d',  out, kernel - 1);
     end
-    
+
     if isfield(settings, 'cache')
         out = sprintf('%s -m %d',  out, settings.cache);
     end
-    
+
     if isfield(settings, 'degree')
         out = sprintf('%s -d %d',  out, settings.degree);
     end
-    
+
+    if isfield(settings, 'gamma')
+        out = sprintf('%s -g %d',  out, settings.gamma);
+    end
+
+    if isfield(settings, 'coef0')
+        out = sprintf('%s -r %d',  out, settings.coef0);
+    end
+
     if isfield(settings, 'shrinking')
         out = sprintf('%s -h %d',  out, settings.shrinking);
     end
-    
+
 end
 
 function strout = strfilter(strin)
