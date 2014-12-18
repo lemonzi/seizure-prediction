@@ -32,7 +32,7 @@ function [accuracy, results, models] = trainSVM(settings)
     % Cross-validation partitions
     cv = cvpartition(labels, 'kfold', settings.crossvalidation.folds);
 
-    accuracy = zeros(cv.NumTestSets, 1);
+    accuracy = {};
     results = {};
     models = {};
 
@@ -126,23 +126,30 @@ function [accuracy, results, models] = trainSVM(settings)
         end
 
         % Very naive method, without kalman filters.
-        % Just predict seizure if most windows have been predicted as seizure
-
+        % Just predict seizure if more than N windows have been predicted as seizure
         test_labels_cell = num2cell(test_labels);
-        result = cellfun(@(pred,truth) ...
-            ((mean(pred) < settings.threshold) - truth), ...
-            pred(:), test_labels_cell(:));
-        accuracy(fold) = mean(abs(result));
-        results{fold} = result;
+        for t = 1:length(settings.threshold)
+            result = cellfun(@(pred,truth) ...
+                ((mean(pred) < settings.threshold(i)) - truth), ...
+                pred(:), test_labels_cell(:));
+            accuracy{t}(fold) = mean(abs(result));
+            results{t}{fold} = result;
+        end
 
         disp('-----------------------------');
-        fprintf('Accuracy (fold %d): %f\n', fold, accuracy(fold));
+        fprintf('Mean accuracy (fold %d): %f\n', fold, mean(accuracy);
         disp('-----------------------------');
 
     end
 
-    disp('=============================');
-    fprintf('Accuracy (total): %f\n', mean(accuracy));
-    disp('=============================');
+    if length(settings.threshold) == 1
+        accuracy = accuracy{1};
+        results = results{1};
+    end
+
+    % This doesn't make sense with various thresholds
+    % disp('=============================');
+    % fprintf('Accuracy (total): %f\n', mean(accuracy));
+    % disp('=============================');
 
 end
