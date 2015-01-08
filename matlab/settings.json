@@ -1,6 +1,6 @@
 {
     "window": {
-        "overlap": -5,
+        "overlap": 0,
         "length": 5
     },
     "bands": {
@@ -8,8 +8,8 @@
     },
     "data": {
         "path": "/Volumes/iFiles/UAB_Seizure_Prediction/Dog_2/",
-        "preictal": -1,
-        "interictal": -1
+        "preictal": 40,
+        "interictal": 40
     },
     "threshold": [1e-3 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1-1e-3],
     "svm": {

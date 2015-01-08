@@ -130,15 +130,16 @@ function [accuracy, results, models] = trainSVM(settings)
         test_labels_cell = num2cell(test_labels);
         for t = 1:length(settings.threshold)
             result = cellfun(@(pred,truth) ...
-                ((mean(pred) < settings.threshold(i)) - truth), ...
+                ((mean(pred) < settings.threshold(t)) - truth), ...
                 pred(:), test_labels_cell(:));
             accuracy{t}(fold) = mean(abs(result));
             results{t}{fold} = result;
         end
 
-        disp('-----------------------------');
-        fprintf('Mean accuracy (fold %d): %f\n', fold, mean(accuracy);
-        disp('-----------------------------');
+        % This doesn't make sense with various thresholds
+        % disp('-----------------------------');
+        % fprintf('Mean accuracy (fold %d): %f\n', fold, mean(accuracy));
+        % disp('-----------------------------');
 
     end
 
